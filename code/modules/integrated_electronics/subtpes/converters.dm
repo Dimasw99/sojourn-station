@@ -1,6 +1,6 @@
 //These circuits convert one variable to another.
 /obj/item/integrated_circuit/converter
-	complexity = 2
+	complexity = 0
 	inputs = list("input")
 	outputs = list("output")
 	activators = list("convert" = IC_PINTYPE_PULSE_IN, "on convert" = IC_PINTYPE_PULSE_OUT)
@@ -143,7 +143,6 @@
 	name = "abs to rel coordinate converter"
 	desc = "Easily convert absolute coordinates to relative coordinates with this."
 	extended_desc = "Keep in mind that both sets of input coordinates should be absolute."
-	complexity = 1
 	inputs = list(
 		"X1" = IC_PINTYPE_NUMBER,
 		"Y1" = IC_PINTYPE_NUMBER,
@@ -176,7 +175,6 @@
 	desc = "Convert relative coordinates to absolute coordinates with this."
 	extended_desc = "Keep in mind that only one set of input coordinates should be absolute, and the other relative. \
 	The output coordinates will be the absolute form of the input relative coordinates."
-	complexity = 1
 	inputs = list(
 		"X1" = IC_PINTYPE_NUMBER,
 		"Y1" = IC_PINTYPE_NUMBER,
@@ -208,7 +206,6 @@
 	name = "advanced rel to abs coordinate converter"
 	desc = "Easily convert relative coordinates to absolute coordinates with this."
 	extended_desc = "This circuit only requires a single set of relative inputs to output absolute coordinates."
-	complexity = 2
 	inputs = list(
 		"X" = IC_PINTYPE_NUMBER,
 		"Y" = IC_PINTYPE_NUMBER,

@@ -1,5 +1,6 @@
 /obj/item/integrated_circuit/transfer
 	category_text = "Data Transfer"
+	complexity = 0
 	power_draw_per_use = 2
 
 /obj/item/integrated_circuit/transfer/multiplexer
@@ -7,7 +8,6 @@
 	desc = "This is what those in the business tend to refer to as a 'mux', or data selector. It moves data from one of the selected inputs to the output."
 	extended_desc = "The first input pin is used to select which of the other input pins which has its data moved to the output. \
 	If the input selection is outside the valid range then no output is given."
-	complexity = 2
 	icon_state = "mux2"
 	inputs = list("input selection" = IC_PINTYPE_NUMBER)
 	outputs = list("output" = IC_PINTYPE_ANY)
@@ -20,7 +20,6 @@
 	for(var/i = 1 to number_of_pins)
 		inputs["input [i]"] = IC_PINTYPE_ANY // This is just a string since pins don't get built until ..() is called.
 
-	complexity = number_of_pins
 	. = ..()
 	desc += " It has [number_of_pins] input pins."
 	extended_desc += " This multiplexer has a range from 1 to [inputs.len - 1]."
@@ -55,7 +54,6 @@
 	desc = "This is what those in the business tend to refer to as a 'demux'. It moves data from the input to one of the selected outputs."
 	extended_desc = "The first input pin is used to select which of the output pins is given the data from the second input pin. \
 	If the output selection is outside the valid range then no output is given."
-	complexity = 2
 	icon_state = "dmux2"
 	inputs = list("output selection" = IC_PINTYPE_NUMBER, "input" = IC_PINTYPE_ANY)
 	outputs = list()
@@ -67,7 +65,6 @@
 /obj/item/integrated_circuit/transfer/demultiplexer/Initialize()
 	for(var/i = 1 to number_of_pins)
 		outputs["output [i]"] = IC_PINTYPE_ANY
-	complexity = number_of_pins
 
 	. = ..()
 	desc += " It has [number_of_pins] output pins."
@@ -104,7 +101,6 @@
 	desc = "Selector switch to choose the pin to be activated by number."
 	extended_desc = "The first input pin is used to select which of the pulse out pins will be activated after activation of the circuit. \
 	If the output selection is outside the valid range then no output is given."
-	complexity = 2
 	icon_state = "dmux2"
 	inputs = list("output selection" = IC_PINTYPE_NUMBER)
 	outputs = list()
@@ -116,7 +112,6 @@
 /obj/item/integrated_circuit/transfer/pulsedemultiplexer/Initialize()
 	for(var/i = 1 to number_of_pins)
 		activators["output [i]"] = IC_PINTYPE_PULSE_OUT
-	complexity = number_of_pins
 
 	. = ..()
 	desc += " It has [number_of_pins] output pins."
@@ -149,7 +144,6 @@
 	name = "two pulse multiplexer"
 	desc = "Pulse in pins to choose the pin value to be sent."
 	extended_desc = "The input pulses are used to select which of the input pins has its data moved to the output."
-	complexity = 2
 	icon_state = "dmux2"
 	inputs = list()
 	outputs = list("output" = IC_PINTYPE_ANY)
@@ -163,7 +157,6 @@
 		inputs["input [i]"] = IC_PINTYPE_ANY
 	for(var/i = 1 to number_of_pins)
 		activators["input [i]"] = IC_PINTYPE_PULSE_IN
-	complexity = number_of_pins
 
 	. = ..()
 	desc += " It has [number_of_pins] pulse in pins and [number_of_pins] output pins."
@@ -201,7 +194,6 @@
 	activators = list("pulse in" = IC_PINTYPE_PULSE_IN, "pulse out" = IC_PINTYPE_PULSE_OUT)
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
 	power_draw_per_use = 0
-	complexity = 0
 	size = 0.1
 
 /obj/item/integrated_circuit/transfer/wire_node/do_work()

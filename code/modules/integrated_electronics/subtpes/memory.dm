@@ -2,7 +2,7 @@
 	name = "memory chip"
 	desc = "This tiny chip can store one piece of data."
 	icon_state = "memory"
-	complexity = 1
+	complexity = 0
 	inputs = list()
 	outputs = list()
 	activators = list("set" = IC_PINTYPE_PULSE_IN, "on set" = IC_PINTYPE_PULSE_OUT)
@@ -15,7 +15,6 @@
 	for(var/i = 1 to number_of_pins)
 		inputs["input [i]"] = IC_PINTYPE_ANY // This is just a string since pins don't get built until ..() is called.
 		outputs["output [i]"] = IC_PINTYPE_ANY
-	complexity = number_of_pins
 	. = ..()
 
 /obj/item/integrated_circuit/memory/examine(mob/user)

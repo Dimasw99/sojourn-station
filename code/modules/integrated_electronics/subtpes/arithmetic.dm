@@ -1,6 +1,6 @@
 //These circuits do simple math.
 /obj/item/integrated_circuit/arithmetic
-	complexity = 1
+	complexity = 0
 	inputs = list(
 		"A" = IC_PINTYPE_NUMBER,
 		"B" = IC_PINTYPE_NUMBER,

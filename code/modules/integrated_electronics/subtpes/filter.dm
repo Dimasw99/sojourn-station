@@ -1,7 +1,7 @@
 /obj/item/integrated_circuit/filter
 	category_text = "Filter"
 	power_draw_per_use = 5
-	complexity = 2
+	complexity = 0
 	activators = list("compare" = IC_PINTYPE_PULSE_IN, "if valid" = IC_PINTYPE_PULSE_OUT, "if not valid" = IC_PINTYPE_PULSE_OUT)
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
 	icon = 'icons/obj/electronic_assemblies.dmi'
@@ -15,7 +15,6 @@
 /obj/item/integrated_circuit/filter/ref
 	extended_desc = "Uses heuristics and complex algoritms to match incoming data against its filtering parameters and occasionally produces both false positives and negatives."
 	var/filter_type
-	complexity = 4
 	inputs = list( "input" = IC_PINTYPE_REF )
 	outputs = list("result" = IC_PINTYPE_BOOLEAN, "self ref" = IC_PINTYPE_SELFREF)
 

@@ -2,7 +2,7 @@
 	name = "text thingy"
 	desc = "Does text-processing related things."
 	category_text = "Text"
-	complexity = 1
+	complexity = 0
 
 
 /obj/item/integrated_circuit/text/lowercase
@@ -93,7 +93,6 @@
 /obj/item/integrated_circuit/text/concatenator
 	name = "concatenator"
 	desc = "This can join up to 8 strings together to get a string with a maximum of 512 characters."
-	complexity = 4
 	inputs = list()
 	outputs = list("result" = IC_PINTYPE_STRING)
 	activators = list("concatenate" = IC_PINTYPE_PULSE_IN, "on concatenated" = IC_PINTYPE_PULSE_OUT)
@@ -134,14 +133,12 @@
 /obj/item/integrated_circuit/text/concatenator/small
 	name = "small concatenator"
 	desc = "This can join up to 4 strings together to get a string with a maximum of 256 characters."
-	complexity = 2
 	number_of_pins = 4
 	max_string_length = 512
 
 /obj/item/integrated_circuit/text/concatenator/large
 	name = "large concatenator"
 	desc = "This can join up to 16 strings together to get a string with a maximum of 1024 characters."
-	complexity = 6
 	number_of_pins = 16
 	max_string_length = 2048
 
@@ -152,7 +149,6 @@
 	The index splits the string <b>after</b> the given index, including spaces. So 'a person' with an index of '3' \
 	will split into 'a p' and 'erson'."
 	icon_state = "split"
-	complexity = 4
 	inputs = list(
 		"string to split" = IC_PINTYPE_STRING,
 		"index" = IC_PINTYPE_NUMBER,
@@ -184,7 +180,6 @@
 	desc = "This circuit takes a string and an index value, then returns the character found at in the string at the given index."
 	extended_desc = "Make sure the index is not longer or shorter than the string length_char. If you don't, the circuit will return empty."
 	icon_state = "split"
-	complexity = 4
 	inputs = list(
 		"string to index" = IC_PINTYPE_STRING,
 		"index" = IC_PINTYPE_NUMBER,
@@ -211,7 +206,6 @@
 	extended_desc = "The first pin is the string to be examined. The second pin is the sample to be found. \
 	For example, inputting 'my wife has caught on fire' with 'has' as the sample will give you position 9. \
 	This circuit isn't case sensitive, and it does not ignore spaces."
-	complexity = 4
 	inputs = list(
 		"string" = IC_PINTYPE_STRING,
 		"sample" = IC_PINTYPE_STRING,
@@ -238,7 +232,6 @@
 /obj/item/integrated_circuit/text/stringlength
 	name = "get length"
 	desc = "This circuit will return the number of characters in a string."
-	complexity = 1
 	inputs = list(
 		"string" = IC_PINTYPE_STRING
 		)
@@ -261,7 +254,6 @@
 	For example, 'eat this burger' will be converted to list('eat','this','burger'). Leave the delimiter null to get a list \
 	of every individual character."
 	icon_state = "split"
-	complexity = 4
 	inputs = list(
 		"string to split" = IC_PINTYPE_STRING,
 		"delimiter" = IC_PINTYPE_STRING,
@@ -303,7 +295,6 @@
 		"replaced string" = IC_PINTYPE_STRING
 	)
 	cooldown_per_use = (10 SECONDS)
-	complexity = 6
 	var/max_len = MAX_MESSAGE_LEN / 2
 
 /obj/item/integrated_circuit/text/text_replacer/do_work()

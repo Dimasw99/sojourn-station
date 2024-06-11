@@ -5,7 +5,7 @@
 	extended_desc = "The access will be automatically added to assembly."
 	icon_state = "card_reader"
 
-	complexity = 4
+	complexity = 0
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
 	outputs = list(
 		"registered name" = IC_PINTYPE_STRING,
@@ -44,7 +44,7 @@
 	desc = "broadcasts access for your assembly via a passkey."
 	extended_desc = "Useful for moving drones through airlocks."
 
-	complexity = 4
+	complexity = 0
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
 	inputs = list("passkey" = IC_PINTYPE_STRING)
 	activators = list(

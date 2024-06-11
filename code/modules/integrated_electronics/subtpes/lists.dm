@@ -1,6 +1,6 @@
 //These circuits do things with lists, and use special list pins for stability.
 /obj/item/integrated_circuit/lists
-	complexity = 1
+	complexity = 0
 	inputs = list(
 		"input" = IC_PINTYPE_LIST
 		)
@@ -179,7 +179,6 @@
 		"on failure" = IC_PINTYPE_PULSE_OUT,
 		)
 	icon_state = "addition"
-	complexity = 2
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
 	cooldown_per_use = 1
 
@@ -214,7 +213,6 @@
 		"on match" = IC_PINTYPE_PULSE_OUT,
 		"on no match" = IC_PINTYPE_PULSE_OUT
 		)
-	complexity = 6
 	icon_state = "addition"
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
 
@@ -457,7 +455,6 @@
 /obj/item/integrated_circuit/lists/constructor/Initialize()
 	for(var/i = 1 to number_of_pins)
 		inputs["input [i]"] = IC_PINTYPE_ANY // This is just a string since pins don't get built until ..() is called.
-	complexity = number_of_pins / 2
 	. = ..()
 
 /obj/item/integrated_circuit/lists/constructor/do_work()
@@ -503,7 +500,6 @@
 /obj/item/integrated_circuit/lists/deconstructor/Initialize()
 	for(var/i = 1 to number_of_pins)
 		outputs["output [i]"] = IC_PINTYPE_ANY // This is just a string since pins don't get built until ..() is called.
-	complexity = number_of_pins / 2
 	. = ..()
 
 /obj/item/integrated_circuit/lists/deconstructor/do_work()

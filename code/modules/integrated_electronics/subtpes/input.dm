@@ -1083,7 +1083,7 @@
 	set_pin_data(IC_OUTPUT, 3, null)
 	if(AM)
 		var/list/power_cell_list = get_power_cell(AM)
-		var/obj/item/cell/small/C = power_cell_list[1]
+		var/obj/item/cell/C = power_cell_list[1]
 		if(istype(C))
 			var/turf/A = get_turf(src)
 			if(get_turf(AM) in view(A))

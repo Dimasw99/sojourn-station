@@ -6,7 +6,9 @@
 	extended_desc = " use &lt;br&gt; to start a new line"
 	desc = "Takes any data type as an input, and displays it to the user upon examining."
 	icon_state = "screen"
-	inputs = list("displayed data" = IC_PINTYPE_ANY)
+	inputs = list("displayed data" = IC_PINTYPE_ANY,
+					"font size" = IC_PINTYPE_NUMBER,
+					"text color" = IC_PINTYPE_STRING)
 	outputs = list()
 	activators = list("load data" = IC_PINTYPE_PULSE_IN)
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
@@ -30,10 +32,16 @@
 
 /obj/item/integrated_circuit/output/screen/do_work()
 	var/datum/integrated_io/I = inputs[1]
+	var/font_size = get_pin_data(IC_INPUT, 2)
+	var/font_color = get_pin_data(IC_INPUT, 3)
 	if(isweakref(I.data))
 		var/datum/d = I.data_as_type(/datum)
 		if(d)
 			stuff_to_display = "[d]"
+			if(isnum(font_size) && font_size < 2) //font size
+				stuff_to_display = "<font size=[font_size]>[stuff_to_display]</font>"
+			if(iscolor(font_color)) //text color
+				stuff_to_display = "<font color='[font_color]'>[stuff_to_display]</font>"
 	else
 		stuff_to_display = replacetext("[I.data]", eol , "\n")
 
@@ -127,14 +135,15 @@
 	desc = "A miniature speaker is attached to this component."
 	icon_state = "speaker"
 	complexity = 8
-	cooldown_per_use = 4 SECONDS
+	cooldown_per_use = 1 SECONDS //The cooldown is tied to the
+	var/cooldown_after_use = 1 SECONDS
 	inputs = list(
 		"sound ID" = IC_PINTYPE_STRING,
 		"volume" = IC_PINTYPE_NUMBER,
 		"frequency" = IC_PINTYPE_BOOLEAN
 	)
 	max_allowed = 5
-	outputs = list()
+	outputs = list("sound duration" = IC_PINTYPE_NUMBER)
 	activators = list("play sound" = IC_PINTYPE_PULSE_IN)
 	power_draw_per_use = 10
 	var/volume
@@ -147,6 +156,7 @@
 	extended_desc += jointext(sounds, ", ")
 	extended_desc += ". The second pin determines the volume of sound that is played"
 	extended_desc += ", and the third determines if the frequency of the sound will vary with each activation."
+	extended_desc += "Cooldown is determined by the duration of the sound plus one second."
 	extended_desc = jointext(extended_desc, null)
 
 /obj/item/integrated_circuit/output/sound/do_work()
@@ -159,8 +169,11 @@
 			return
 		vol = clamp(vol, 0, 100)
 		playsound(src, selected_sound, vol, freq, -1)
+		cooldown_per_use = selected_sound.len + cooldown_after_use
+		set_pin_data(IC_OUTPUT, 1, selected_sound.len)
 		var/atom/A = get_object()
 		A.investigate_log("played a sound ([selected_sound]) as [type].", INVESTIGATE_CIRCUIT)
+		push_data()
 
 /obj/item/integrated_circuit/output/sound/on_data_written()
 	volume = get_pin_data(IC_INPUT, 2)

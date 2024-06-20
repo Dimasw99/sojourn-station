@@ -412,10 +412,10 @@ a creative player the means to solve many problems.  Circuits are held inside an
 		if(!check_power())
 			power_fail()
 			return FALSE
+	do_work(ord) //moved it behind next_use incase our cooldown changes when do_work is being called
 	next_use = world.time + cooldown_per_use
 	if(assembly)
 		assembly.ext_next_use = world.time + ext_cooldown
-	do_work(ord)
 	return TRUE
 
 /obj/item/integrated_circuit/proc/do_work(ord)

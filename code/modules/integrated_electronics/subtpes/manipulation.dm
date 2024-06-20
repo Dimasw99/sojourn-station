@@ -378,7 +378,7 @@
 /obj/item/integrated_circuit/manipulation/grabber/proc/grab(obj/item/AM)
 	var/max_w_class = assembly.w_class
 	if(check_target(AM))
-		if(contents.len < max_items && AM.w_class < max_w_class)
+		if(contents.len < max_items && AM.w_class <= max_w_class)
 			var/atom/A = get_object()
 			A.investigate_log("picked up ([AM]) with [src].", INVESTIGATE_CIRCUIT)
 			AM.forceMove(src)
@@ -470,7 +470,7 @@
 	activate_pin(2)
 
 /obj/item/integrated_circuit/manipulation/claw/proc/can_pull(obj/I)
-	return assembly && I && I.w_class <= assembly.w_class && !I.anchored && I != assembly
+	return assembly && I && !I.anchored && I != assembly
 
 /obj/item/integrated_circuit/manipulation/claw/proc/pull()
 	var/obj/acting_object = get_object()
@@ -595,7 +595,7 @@
 	action_flags = IC_ACTION_LONG_RANGE
 
 	matter = list(MATERIAL_STEEL = 10, MATERIAL_SILVER = 2, MATERIAL_GOLD = 2)
-	var/entropy_value = 1
+	var/entropy_value = 5
 
 /obj/item/integrated_circuit/manipulation/bluespace_rift/do_work()
 
@@ -613,12 +613,12 @@
 	var/obj/effect/portal/P = new(rift_location)
 	if(tporter && tporter.locked && !tporter.one_time_use)
 		P.set_target(tporter.locked)
-		P.entropy_value += entropy_value
+		P.entropy_value = entropy_value
 	else
 		var/turf/destination = get_random_turf_in_range(src, 10)
 		if(destination)
 			P.set_target(destination)
-			P.entropy_value += entropy_value
+			P.entropy_value = entropy_value
 			P.failchance = 33
 		else
 			playsound(src, get_sfx("spark"), 50, 1)

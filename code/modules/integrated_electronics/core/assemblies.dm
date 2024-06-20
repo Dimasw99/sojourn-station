@@ -123,6 +123,10 @@
 			if(!draw_power(I.power_draw_idle))
 				I.power_fail()
 
+	// Check if we have a recharable cell, if yes pseudo recharge on the assembly as we have already triggered its cooldown
+	if(battery && battery.autorecharging)
+		give_power((battery.maxcharge*battery.autorecharge_rate)/(CELLRATE*(battery.recharge_time+1)))
+
 /obj/item/device/electronic_assembly/interact(mob/user, circuit)
 	if(opened)
 		nano_ui_interact(user, circuit)

@@ -13,7 +13,7 @@
 	var/max_components = IC_MAX_SIZE_BASE
 	var/max_complexity = IC_COMPLEXITY_BASE
 	var/opened = TRUE
-	var/obj/item/cell/small/battery // Internal cell which most circuits need to work.
+	var/obj/item/cell/battery // Internal cell which most circuits need to work.
 	var/cell_type = /obj/item/cell/small
 	var/can_charge = TRUE //Can it be charged in a recharger?
 	var/can_fire_equipped = FALSE //Can it fire/throw weapons when the assembly is being held?
@@ -743,7 +743,7 @@
 				S.attackby_react(I,user,user.a_intent)
 			return ..()
 
-	else if(istype(I, /obj/item/cell/small))
+	else if(istype(I, cell_type))
 		if(!opened)
 			to_chat(user, SPAN_WARNING("[src]'s hatch is closed, so you can't access \the [src]'s power supplier."))
 			for(var/obj/item/integrated_circuit/input/S in assembly_components)
@@ -952,6 +952,7 @@
 	w_class = ITEM_SIZE_NORMAL
 	max_components = IC_MAX_SIZE_BASE * 2
 	max_complexity = IC_COMPLEXITY_BASE * 2
+	cell_type = /obj/item/cell/medium
 
 /obj/item/device/electronic_assembly/medium/default
 	name = "type-a electronic mechanism"
@@ -996,6 +997,7 @@
 	w_class = ITEM_SIZE_BULKY
 	max_components = IC_MAX_SIZE_BASE * 4
 	max_complexity = IC_COMPLEXITY_BASE * 4
+	cell_type = /obj/item/cell/large
 
 /obj/item/device/electronic_assembly/large/default
 	name = "type-a electronic machine"
@@ -1034,6 +1036,7 @@
 	max_complexity = IC_COMPLEXITY_BASE * 3
 	allowed_circuit_action_flags = IC_ACTION_MOVEMENT | IC_ACTION_COMBAT | IC_ACTION_LONG_RANGE
 	can_anchor = FALSE
+	cell_type = /obj/item/cell/medium
 
 /obj/item/device/electronic_assembly/drone/can_move()
 	return TRUE
@@ -1073,6 +1076,7 @@
 	w_class = ITEM_SIZE_NORMAL
 	max_components = IC_MAX_SIZE_BASE * 2
 	max_complexity = IC_COMPLEXITY_BASE * 2
+	cell_type = /obj/item/cell/medium
 
 /obj/item/device/electronic_assembly/wallmount/heavy
 	name = "heavy wall-mounted electronic assembly"
@@ -1081,6 +1085,7 @@
 	w_class = ITEM_SIZE_BULKY
 	max_components = IC_MAX_SIZE_BASE * 4
 	max_complexity = IC_COMPLEXITY_BASE * 4
+	cell_type = /obj/item/cell/large
 
 /obj/item/device/electronic_assembly/wallmount/light
 	name = "light wall-mounted electronic assembly"

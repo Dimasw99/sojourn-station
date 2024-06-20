@@ -90,6 +90,15 @@
 
 #define ATAN2(x, y) ( !(x) && !(y) ? 0 : (y) >= 0 ? arccos((x) / sqrt((x)*(x) + (y)*(y))) : -arccos((x) / sqrt((x)*(x) + (y)*(y))) )
 
+// ArcTan2. Returns the degree between two points in an x and y system.
+/proc/arctantwo(x1,y1,x2,y2)
+  var/dx = x2-x1
+  var/dy = y2-y1
+  if(!dy) return (dx>=0) ? 90 : 270
+  . = arctan(dx/dy)
+  if(dy<0) return .+180
+  if(dx<0) return .+360
+
 // Greatest Common Divisor - Euclid's algorithm
 /proc/Gcd(a, b)
 	return b ? Gcd(b, (a) % (b)) : a

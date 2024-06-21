@@ -156,7 +156,7 @@
 	extended_desc += jointext(sounds, ", ")
 	extended_desc += ". The second pin determines the volume of sound that is played"
 	extended_desc += ", and the third determines if the frequency of the sound will vary with each activation."
-	extended_desc += "Cooldown is determined by the duration of the sound plus one second."
+	extended_desc += "Cooldown is determined by the duration of the sound plus [cooldown_after_use] second(s)."
 	extended_desc = jointext(extended_desc, null)
 
 /obj/item/integrated_circuit/output/sound/do_work()
@@ -198,6 +198,7 @@
 /obj/item/integrated_circuit/output/sound/hev
 	name = "HEV sound circuit"
 	desc = "Takes a sound name as an input, and will play said sound when pulsed. This circuit is similar to those used in some old RIG suit"
+	cooldown_after_use = 0.5 SECONDS
 	sounds = list(
 		"bio_warn"						= 'sound/voice/Hevsounds/biohazard_detected.wav',
 		"chem_warn" 					= 'sound/voice/Hevsounds/chemical_detected.wav',
@@ -215,7 +216,13 @@
 		"minor_lacerations"				= 'sound/voice/Hevsounds/minor_lacerations.wav',
 		"major_fracture"				= 'sound/voice/Hevsounds/major_fracture.wav',
 		"major_lacerations"				= 'sound/voice/Hevsounds/major_lacerations.wav',
-		"wound_sterilized"				= 'sound/voice/Hevsounds/wound_sterilized.wav'
+		"wound_sterilized"				= 'sound/voice/Hevsounds/wound_sterilized.wav',
+		"administering_medical"			= 'sound/voice/Hevsounds/administering_medical.wav',
+		"adrenaline_shot"				= 'sound/voice/Hevsounds/adrenaline_shot.wav',
+		"automedic_on"					= 'sound/voice/Hevsounds/automedic_on.wav',
+		"antitoxin_shot"				= 'sound/voice/Hevsounds/antitoxin_shot.wav',
+		"heat_damage"					= 'sound/voice/Hevsounds/heat_damage.wav',
+		"morphine_shot"					= 'sound/voice/Hevsounds/morphine_shot.wav'
 		)
 	spawn_flags = IC_SPAWN_RESEARCH|IC_SPAWN_DEFAULT
 

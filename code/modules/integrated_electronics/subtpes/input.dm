@@ -10,7 +10,7 @@
 	name = "button"
 	desc = "This tiny button must do something, right?"
 	icon_state = "button"
-	complexity = 1
+	complexity = 0
 	can_be_asked_input = TRUE
 	inputs = list()
 	outputs = list()
@@ -35,7 +35,7 @@
 	name = "toggle button"
 	desc = "It toggles on, off, on, off..."
 	icon_state = "toggle_button"
-	complexity = 1
+	complexity = 0
 	can_be_asked_input = TRUE
 	inputs = list()
 	outputs = list("on" = IC_PINTYPE_BOOLEAN)
@@ -66,7 +66,7 @@
 	name = "number pad"
 	desc = "This small number pad allows someone to input a number into the system."
 	icon_state = "numberpad"
-	complexity = 2
+	complexity = 0
 	can_be_asked_input = TRUE
 	inputs = list()
 	outputs = list("number entered" = IC_PINTYPE_NUMBER)
@@ -98,7 +98,7 @@
 	name = "text pad"
 	desc = "This small text pad allows someone to input a string into the system."
 	icon_state = "textpad"
-	complexity = 2
+	complexity = 0
 	can_be_asked_input = TRUE
 	inputs = list()
 	outputs = list("string entered" = IC_PINTYPE_STRING)
@@ -131,7 +131,7 @@
 	name = "color pad"
 	desc = "This small color pad allows someone to input a hexadecimal color into the system."
 	icon_state = "colorpad"
-	complexity = 2
+	complexity = 0
 	can_be_asked_input = TRUE
 	inputs = list()
 	outputs = list("color entered" = IC_PINTYPE_STRING)
@@ -480,6 +480,68 @@
 		set_pin_data(IC_OUTPUT, 1, WEAKREF(A))
 	push_data()
 	activate_pin(2)
+
+/obj/item/integrated_circuit/input/projectile_simulator
+	name = "projectile simulator"
+	desc = "Returns a list of refrences it would have penetrated and its final target."
+	extended_desc = "The circuit cannot penetrate walls and can choose to stop at machines.\
+	It is possible to either target a relative x and y position or refrence directly."
+	icon_state = "numberpad"
+	complexity = 5
+	inputs = list(
+		"X" = IC_PINTYPE_NUMBER,
+		"Y" = IC_PINTYPE_NUMBER,
+		"target" = IC_PINTYPE_REF,
+		"penetrate machines" = IC_PINTYPE_BOOLEAN
+		)
+	outputs = list("targets hit" = IC_PINTYPE_LIST,"final hit" = IC_PINTYPE_REF)
+	activators = list(
+		"simulate cord" = IC_PINTYPE_PULSE_IN,
+		"simulate ref" = IC_PINTYPE_PULSE_IN,
+		"target hit" = IC_PINTYPE_PULSE_OUT,
+		"failed to hit" = IC_PINTYPE_PULSE_OUT)
+	spawn_flags = IC_SPAWN_RESEARCH
+	power_draw_per_use = 40
+
+/obj/item/integrated_circuit/input/projectile_simulator/do_work(ord)
+	if(assembly)
+		var/target
+		switch(ord)
+			if(1)
+				var/turf/T = get_turf(assembly)
+				var/target_x = get_pin_data(IC_INPUT, 1)
+				var/target_y = get_pin_data(IC_INPUT, 2)
+				target = locate(
+								clamp(target_x + assembly.x, 0, world.maxy),
+								clamp(target_y + assembly.y, 0, world.maxy),
+								T.z)
+			if(2)
+				target = get_pin_data(IC_INPUT, 3)
+		var/penetrate_machines = get_pin_data(IC_INPUT, 4)
+		var/obj/item/projectile/projectile
+		if(penetrate_machines)
+			projectile = /obj/item/projectile/beam //beams and projectiles have different penetration codes
+		else
+			projectile = /obj/item/projectile/bullet
+		var/datum/penetration_holder/trace_penetration
+		if (projectile && projectile.penetration_holder && ((!QDELETED(projectile.penetration_holder)) && (!QDESTROYING(projectile.penetration_holder))))
+			trace_penetration = projectile.penetration_holder
+		var/obj/item/projectile/new_trace = check_trajectory_raytrace(target, src, projectile)
+		spawn(0) //time for the projectile to process
+		if(new_trace.impact_atom)
+			var/list/possible_targets = list()
+			if (trace_penetration && trace_penetration.force_penetration_on.len)
+				possible_targets = trace_penetration.force_penetration_on
+			possible_targets += new_trace.impact_atom
+			set_pin_data(IC_OUTPUT, 1, WEAKREF(new_trace.impact_atom))
+			set_pin_data(IC_OUTPUT, 2, WEAKREF(possible_targets))
+			push_data()
+			if(WEAKREF(new_trace.impact_atom) == target)
+				activate_pin(1)
+			else
+				activate_pin(2)
+		else
+			activate_pin(2)
 
 /obj/item/integrated_circuit/input/local_locator
 	name = "local locator"
@@ -1290,7 +1352,7 @@
 	name = "integrated medical analyser"
 	desc = "A very small version of the common medical analyser. This allows the machine to track some vital signs."
 	icon_state = "medscan"
-	complexity = 4
+	complexity = 2
 	inputs = list("target" = IC_PINTYPE_REF)
 	outputs = list(
 		"brain activity" = IC_PINTYPE_BOOLEAN,
@@ -1301,7 +1363,7 @@
 		)
 	activators = list("scan" = IC_PINTYPE_PULSE_IN, "on scanned" = IC_PINTYPE_PULSE_OUT)
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
-	power_draw_per_use = 40
+	power_draw_per_use = 5
 
 /obj/item/integrated_circuit/input/med_scanner/do_work()
 	var/mob/living/carbon/human/H = get_pin_data_as_type(IC_INPUT, 1, /mob/living/carbon/human)
@@ -1342,7 +1404,9 @@
 		"NSA"					= IC_PINTYPE_NUMBER,//14
 		"MAX NSA"				= IC_PINTYPE_NUMBER,//15
 		"list of reagents"		= IC_PINTYPE_LIST,//16
-		"quantity of reagents"	= IC_PINTYPE_LIST//17
+		"quantity of reagents"	= IC_PINTYPE_LIST,//17
+		"number of infections"	= IC_PINTYPE_NUMBER,//18
+		"number of internal wounds"	= IC_PINTYPE_NUMBER//19
 	)
 	activators = list("scan" = IC_PINTYPE_PULSE_IN, "on scanned" = IC_PINTYPE_PULSE_OUT)
 	spawn_flags = IC_SPAWN_RESEARCH
@@ -1359,9 +1423,9 @@
 		set_pin_data(IC_OUTPUT, 2, (H.stat == 0))
 		set_pin_data(IC_OUTPUT, 3, H.getBruteLoss())
 		set_pin_data(IC_OUTPUT, 4, H.getFireLoss())
-		set_pin_data(IC_OUTPUT, 5, M.chem_effects[CE_TOXIN] + M.chem_effects[CE_ALCOHOL_TOXIC])
+		set_pin_data(IC_OUTPUT, 5, H.chem_effects[CE_TOXIN] + H.chem_effects[CE_ALCOHOL_TOXIC])
 		set_pin_data(IC_OUTPUT, 6, H.getOxyLoss())
-		set_pin_data(IC_OUTPUT, 7, H.getCloneLoss())
+		set_pin_data(IC_OUTPUT, 7, get_tumors(H))
 		set_pin_data(IC_OUTPUT, 8, text2num(H.get_pulse(GETPULSE_TOOL)))
 		set_pin_data(IC_OUTPUT, 9, round((H.vessel.get_reagent_amount("blood") / H.species.blood_volume)*100))
 		set_pin_data(IC_OUTPUT, 10, H.radiation)
@@ -1369,7 +1433,7 @@
 		set_pin_data(IC_OUTPUT, 12, round(H.health/H.maxHealth*100))
 		set_pin_data(IC_OUTPUT, 13, H.bodytemperature-T0C)
 		set_pin_data(IC_OUTPUT, 14, H.metabolism_effects.get_nsa())
-		set_pin_data(IC_OUTPUT, 15, H.metabolism_effects.nsa_threshold())
+		set_pin_data(IC_OUTPUT, 15, H.metabolism_effects.nsa_threshold)
 		var/cont[0]
 		var/amt[0]
 		for(var/datum/reagent/RE in H.reagents.reagent_list)
@@ -1378,15 +1442,29 @@
 				amt	+= round(H.reagents.get_reagent_amount(RE.id), 0.1)
 		set_pin_data(IC_OUTPUT, 16, cont)
 		set_pin_data(IC_OUTPUT, 17, amt)
+		set_pin_data(IC_OUTPUT, 18, get_infections(H))
+		set_pin_data(IC_OUTPUT, 19, get_wounds(H))
 
 	push_data()
 	activate_pin(2)
 
 /obj/item/integrated_circuit/input/adv_med_scanner/proc/get_tumors(var/mob/living/carbon/human/H)
 	. = 0
-	for(var/obj/item/organ/external/limb in H.organs)
+	for(var/obj/item/organ/external/limb in H.bad_external_organs)
 		if(limb.status & ORGAN_MUTATED)
-		.++
+			.++
+
+/obj/item/integrated_circuit/input/adv_med_scanner/proc/get_infections(var/mob/living/carbon/human/H)
+	. = 0
+	for(var/obj/item/organ/external/limb in H.bad_external_organs)
+		if(limb.status & ORGAN_INFECTED)
+			.++
+
+/obj/item/integrated_circuit/input/adv_med_scanner/proc/get_wounds(var/mob/living/carbon/human/H)
+	. = 0
+	for(var/obj/item/organ/external/limb in H.bad_external_organs)
+		if(limb.status & ORGAN_WOUNDED)
+			. ++
 
 /obj/item/integrated_circuit/input/atmospheric_analyzer
 	name = "atmospheric analyzer"

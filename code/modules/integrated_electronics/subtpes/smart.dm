@@ -80,23 +80,48 @@
 	icon_state = "numberpad"
 	complexity = 40
 	cooldown_per_use = 5 SECONDS
-	inputs = list("X target" = IC_PINTYPE_NUMBER,"Y target" = IC_PINTYPE_NUMBER,"obstacle" = IC_PINTYPE_REF)
+	inputs = list("X target" = IC_PINTYPE_NUMBER,"Y target" = IC_PINTYPE_NUMBER,"obstacle" = IC_PINTYPE_REF,"access" = IC_PINTYPE_STRING)
 	outputs = list("X" = IC_PINTYPE_LIST,"Y" = IC_PINTYPE_LIST)
 	activators = list("calculate path" = IC_PINTYPE_PULSE_IN, "on calculated" = IC_PINTYPE_PULSE_OUT,"not calculated" = IC_PINTYPE_PULSE_OUT)
 	spawn_flags = IC_SPAWN_RESEARCH
 	power_draw_per_use = 80
+	var/obj/item/card/id/idc
 
 /obj/item/integrated_circuit/smart/advanced_pathfinder/Initialize()
 	.=..()
+	idc = new(src)
+
+/obj/item/integrated_circuit/smart/advanced_pathfinder/Destroy()
+	QDEL_NULL(idc)
+	return ..()
 
 /obj/item/integrated_circuit/smart/advanced_pathfinder/do_work()
 	if(!assembly)
 		activate_pin(3)
 		return
+	var/Ps = get_pin_data(IC_INPUT, 4)
+	if(!Ps)
+		return
+
+	var/list/signature_and_data = splittext(Ps, ":")
+
+	if(length(signature_and_data) < 2)
+		return
+
+	var/signature = signature_and_data[1]
+	var/result = signature_and_data[2]
+
+	if(!check_data_signature(signature, result))
+		activate_pin(3)
+		return
+
+	var/list/Pl = json_decode(result)
+	if(Pl&&islist(Pl))
+		idc.access = Pl
 
 	var/turf/a_loc = get_turf(assembly)
 	var/turf/b_loc = locate(clamp(get_pin_data(IC_INPUT, 1), 0, world.maxx), clamp(get_pin_data(IC_INPUT, 2), 0, world.maxy), a_loc.z)
-	var/list/P = AStar(a_loc, b_loc, /turf/proc/CardinalTurfsWithAccess, /turf/proc/Distance, 0, 200, id = assembly.access_card, exclude=get_turf(get_pin_data_as_type(IC_INPUT, 3, /atom)))
+	var/list/P = get_path_to(assembly, b_loc, 0, 0, idc, TRUE, exclude=get_turf(get_pin_data_as_type(IC_INPUT, 3, /atom)))
 
 	if(!islist(P))
 		activate_pin(3)

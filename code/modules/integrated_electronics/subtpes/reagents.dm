@@ -102,6 +102,7 @@
 	var/direction_mode = IC_REAGENTS_INJECT
 	var/transfer_amount = 10
 	var/busy = FALSE
+	var/bypass = FALSE
 
 /obj/item/integrated_circuit/reagent/injector/on_reagent_change(changetype)
 	push_vol()
@@ -190,18 +191,19 @@
 			activate_pin(3)
 			return
 
-		if(isliving(AM) && inject_check(AM))
-			var/mob/living/L = AM
-			if(!L.can_inject(null, 0))
+		if(ishuman(AM) && inject_check(AM))
+			var/mob/living/carbon/human/L = AM
+			if(assembly == L.r_store || assembly == L.l_store)
+				bypass = TRUE //The injector has been put under the thick layer
+			if(!L.can_inject(null, 0, BP_CHEST,bypass))
 				activate_pin(3)
 				return
-			var/injection_status = L.can_inject(null, BP_CHEST)
 			// admin logging stuff
 			log_admin("[key_name(L)] is getting injected with " + reagents.get_reagents() + " by \the [acting_object]")
 			L.visible_message(SPAN("danger", "[acting_object] is trying to inject [L]!"), \
 								SPAN("danger", "[acting_object] is trying to inject you!"))
 			busy = TRUE
-			addtimer(CALLBACK(src, .proc/inject_after, WEAKREF(L)), injection_status * 3 SECONDS)
+			addtimer(CALLBACK(src, .proc/inject_after, WEAKREF(L)), 3 SECONDS)
 			return
 		else
 			if(!AM.is_open_container())
@@ -221,14 +223,13 @@
 
 		if(istype(AM, /mob/living/carbon))
 			var/mob/living/carbon/C = AM
-			var/injection_status = C.can_inject(null, BP_CHEST)
-			if(istype(C, /mob/living/carbon/slime) || !C.dna || !injection_status)
+			if(istype(C, /mob/living/carbon/slime) || !C.dna)
 				activate_pin(3)
 				return
 			C.visible_message(SPAN("danger", "[acting_object] takes a blood sample from [C]!"), \
 			SPAN("danger", "[acting_object] takes a blood sample from you!"))
 			busy = TRUE
-			addtimer(CALLBACK(src, .proc/draw_after, WEAKREF(C), tramount), injection_status * 3 SECONDS)
+			addtimer(CALLBACK(src, .proc/draw_after, WEAKREF(C), tramount), 3 SECONDS)
 			return
 
 		else

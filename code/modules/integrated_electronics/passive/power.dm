@@ -12,7 +12,7 @@
 /obj/item/integrated_circuit/passive/power/solar_cell
 	name = "tiny photovoltaic cell"
 	desc = "It's a very tiny solar cell, generally used in calculators."
-	extended_desc = "This cell generates [max_power] W of power in optimal lighting conditions. Less light will result in less power being generated."
+	extended_desc = "This cell generates 30W of power in optimal lighting conditions. Less light will result in less power being generated."
 	icon_state = "solar_cell"
 	complexity = 8
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
@@ -53,7 +53,7 @@
 	name = "tesla power relay"
 	desc = "A seemingly enigmatic device which connects to nearby APCs wirelessly and draws power from them."
 	w_class = ITEM_SIZE_SMALL
-	extended_desc = "The siphon drains [power_amount] W of power from an APC in the same room as it as long as it has charge remaining. It will always drain \
+	extended_desc = "The siphon drains 50W of power from an APC in the same room as it as long as it has charge remaining. It will always drain \
 	from the 'equipment' power channel."
 	icon_state = "power_relay"
 	complexity = 7
@@ -75,7 +75,7 @@
 	name = "large tesla power relay"
 	desc = "A seemingly enigmatic device which connects to nearby APCs wirelessly and draws power from them, now in industrial size!"
 	w_class = ITEM_SIZE_BULKY
-	extended_desc = "The siphon drains [power_amount]W of power from an APC in the same room as it as long as it has charge remaining. It will always drain \
+	extended_desc = "The siphon drains 1kW of power from an APC in the same room as it as long as it has charge remaining. It will always drain \
  	from the 'equipment' power channel."
 	icon_state = "power_relay"
 	complexity = 15
@@ -97,7 +97,7 @@
 	spawn_flags = IC_SPAWN_DEFAULT|IC_SPAWN_RESEARCH
 	reagent_flags = OPENCONTAINER
 	var/volume = 60
-	var/list/fuel = list(	/datum/reagent/toxin/plasma = 50,
+	var/list/fuel = list(	/datum/reagent/toxin/plasma = 50, //How much power each unit will give
 							/datum/reagent/toxin/fuel = 15,
 							/datum/reagent/carbon = 10,
 							/datum/reagent/ethanol = 10,
@@ -122,11 +122,11 @@
 
 /obj/item/integrated_circuit/passive/power/chemical_cell/make_energy()
 	if(assembly && assembly.battery && assembly.battery.maxcharge <= assembly.battery.charge)
-		for(var/datum/reagent/I in reagents)
+		for(var/datum/reagent/I in reagents.reagent_list)
 			for(I in fuel)
 				var/charge_missing = assembly.battery.maxcharge - assembly.battery.charge //how much do are we missing?
 				var/used_amount = charge_missing / fuel[I] //How many units would it take?
-				used_amount = clamp(min(get_reagent_amount(I),used_amount),0,amount_used_limit) //Lets use as much as we can, don't go below 0 somehow and not go past our limit.
+				used_amount = clamp(min(reagents.get_reagent_amount(I),used_amount),0,amount_used_limit) //Lets use as much as we can, don't go below 0 somehow and not go past our limit.
 				assembly.battery.give(fuel[I]*used_amount)
 				reagents.remove_reagent(I,used_amount)
 
@@ -138,7 +138,7 @@
 /obj/item/integrated_circuit/passive/power/metabolic_siphon
 	name = "metabolic siphon"
 	desc = "A complicated piece of technology which converts bodily nutriments of a host into electricity."
-	extended_desc = "The siphon generates [power_amount]W of energy.  The entity will feel an increased \
+	extended_desc = "The siphon generates 50W of energy.  The entity will feel an increased \
 	appetite and will need to eat more often due to this.  This device will still work if used inside synthetic entities."
 	icon_state = "setup_implant"
 	complexity = 5

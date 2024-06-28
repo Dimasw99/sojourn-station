@@ -69,7 +69,6 @@
 		/obj/item/integrated_circuit/reagent/storage = 40,
 
 		/obj/item/integrated_circuit/passive/power/solar_cell = 40,
-		/obj/item/integrated_circuit/passive/power/metabolic_siphon/synthetic = 40,
 		/obj/item/integrated_circuit/passive/power/metabolic_siphon = 40,
 		/obj/item/integrated_circuit/passive/power/relay/large = 40,
 		/obj/item/integrated_circuit/passive/power/relay = 40,

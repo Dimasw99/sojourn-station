@@ -392,7 +392,7 @@ default behaviour is:
 	return FALSE
 
 
-/mob/living/proc/can_inject(mob/user, error_msg, target_zone)
+/mob/living/proc/can_inject(mob/user, error_msg, target_zone, bypass)
 	return TRUE
 
 /mob/living/is_injectable(allowmobs = TRUE)

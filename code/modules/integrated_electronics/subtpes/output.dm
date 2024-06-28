@@ -45,28 +45,35 @@
 	else
 		stuff_to_display = replacetext("[I.data]", eol , "\n")
 
-/obj/item/integrated_circuit/output/screen/large
-	name = "large screen"
+/obj/item/integrated_circuit/output/screen/medium
+	name = "medium screen"
 	desc = "Takes any data type as an input and displays it to anybody near the device when pulsed. \
 	It can also be examined to see the last thing it displayed."
 	icon_state = "screen_medium"
 	power_draw_per_use = 20
 
-/obj/item/integrated_circuit/output/screen/large/do_work()
+/obj/item/integrated_circuit/output/screen/medium/do_work()
 	..()
-
-	if(isliving(assembly.loc))//this whole block just returns if the assembly is neither in a mobs hands or on the ground
-		var/mob/living/H = assembly.loc
-		if(H.get_active_hand() != assembly && H.get_inactive_hand() != assembly && istype(H))
-			return
-	else
-		if(!isturf(assembly.loc))
-			return
-
 	var/list/nearby_things = range(0, get_turf(src))
 	for(var/mob/M in nearby_things)
 		var/obj/O = assembly ? assembly : src
 		to_chat(M, SPAN("notice", "[icon2html(O.icon, world, O.icon_state)] [stuff_to_display]"))
+	if(assembly)
+		assembly.investigate_log("displayed \"[html_encode(stuff_to_display)]\" with [type].", INVESTIGATE_CIRCUIT)
+	else
+		investigate_log("displayed \"[html_encode(stuff_to_display)]\" as [type].", INVESTIGATE_CIRCUIT)
+
+/obj/item/integrated_circuit/output/screen/large
+	name = "large screen"
+	desc = "Takes any data type as an input and displays it to the user upon examining, and to all nearby beings when pulsed."
+	icon_state = "screen_large"
+	power_draw_per_use = 40
+	cooldown_per_use = 1 SECONDS
+
+/obj/item/integrated_circuit/output/screen/large/do_work()
+	..()
+	var/obj/O = assembly ? get_turf(assembly) : loc
+	O.visible_message(SPAN("notice", "[icon2html(O.icon, world, O.icon_state)]  [stuff_to_display]"))
 	if(assembly)
 		assembly.investigate_log("displayed \"[html_encode(stuff_to_display)]\" with [type].", INVESTIGATE_CIRCUIT)
 	else
@@ -164,7 +171,7 @@
 	var/vol = volume
 	var/freq = get_pin_data(IC_INPUT, 3)
 	if(!isnull(ID) && !isnull(vol))
-		var/selected_sound = sounds[ID]
+		var/sound/selected_sound = sounds[ID]
 		if(!selected_sound)
 			return
 		vol = clamp(vol, 0, 100)
@@ -222,7 +229,8 @@
 		"automedic_on"					= 'sound/voice/Hevsounds/automedic_on.wav',
 		"antitoxin_shot"				= 'sound/voice/Hevsounds/antitoxin_shot.wav',
 		"heat_damage"					= 'sound/voice/Hevsounds/heat_damage.wav',
-		"morphine_shot"					= 'sound/voice/Hevsounds/morphine_shot.wav'
+		"morphine_shot"					= 'sound/voice/Hevsounds/morphine_shot.wav',
+		"innsuficient_medical"			= 'sound/voice/Hevsounds/innsuficient_medical.wav'
 		)
 	spawn_flags = IC_SPAWN_RESEARCH|IC_SPAWN_DEFAULT
 
@@ -438,22 +446,3 @@
 		text_output += "\an ["\improper[name]"] labeled '[displayed_name]'"
 	text_output += " which is currently [get_pin_data(IC_INPUT, 1) ? "lit <font color=[led_color]>*</font>" : "unlit"]."
 	to_chat(user, text_output)
-
-/obj/item/integrated_circuit/output/screen/large
-	name = "medium screen"
-
-/obj/item/integrated_circuit/output/screen/extralarge // the subtype is called "extralarge" because tg brought back medium screens and they named the subtype /screen/large
-	name = "large screen"
-	desc = "Takes any data type as an input and displays it to the user upon examining, and to all nearby beings when pulsed."
-	icon_state = "screen_large"
-	power_draw_per_use = 40
-	cooldown_per_use = 10
-
-/obj/item/integrated_circuit/output/screen/extralarge/do_work()
-	..()
-	var/obj/O = assembly ? get_turf(assembly) : loc
-	O.visible_message(SPAN("notice", "[icon2html(O.icon, world, O.icon_state)]  [stuff_to_display]"))
-	if(assembly)
-		assembly.investigate_log("displayed \"[html_encode(stuff_to_display)]\" with [type].", INVESTIGATE_CIRCUIT)
-	else
-		investigate_log("displayed \"[html_encode(stuff_to_display)]\" as [type].", INVESTIGATE_CIRCUIT)
